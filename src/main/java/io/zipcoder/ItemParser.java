@@ -11,16 +11,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ItemParser {
-    public List<Item> parseItemList(String valueToParse){
+    public List<Item> parseItemList(String valueToParse) {
         String[] itemArr = valueToParse.split("##");
         List<Item> answer = new ArrayList<>();
-        try {
-            for (String string: itemArr) {
-                answer.add(parseSingleItem(string+"##"));
+
+        for (String string : itemArr) {
+            try {
+                answer.add(parseSingleItem(string + "##"));
 
             }
-        }
-        catch (ItemParseException e){
+            catch(ItemParseException e){
+            }
         }
         return answer;
     }
@@ -33,18 +34,17 @@ public class ItemParser {
     public String parseName(String singleItem) throws ItemParseException {
         String stringName;
         String lowerCase = singleItem.toLowerCase();
-        Pattern pattern = Pattern.compile("name(.*?)(\\w+).+##");
+        Pattern pattern = Pattern.compile("name([:|@|^|*|%])(\\w+).+##");
         return throwException(lowerCase, pattern);
     }
 
     public Double parsePrice(String singleItem) throws ItemParseException {
         Double doublePrice;
-        Pattern pattern = Pattern.compile(".*price(.*?)(\\d+\\.\\d{1,2}).+##");
+        Pattern pattern = Pattern.compile(".*price([:|@|^|*|%])(\\d+\\.\\d{1,2}).+##");
         Matcher matcher = pattern.matcher(singleItem);
-        if (matcher.matches()){
+        if (matcher.matches()) {
             doublePrice = Double.parseDouble(matcher.group(2));
-        }
-        else {
+        } else {
             throw new ItemParseException();
         }
         return doublePrice;
@@ -53,13 +53,13 @@ public class ItemParser {
     public String parseType(String singleItem) throws ItemParseException {
         String stringType;
         String lowerCase = singleItem.toLowerCase();
-        Pattern pattern = Pattern.compile(".*type(.*?)(\\w+).+##");
+        Pattern pattern = Pattern.compile(".*type([:|@|^|*|%])(\\w+).+##");
         return throwException(lowerCase, pattern);
     }
 
     public String parseExpiration(String singleItem) throws ItemParseException {
         String stringExpiration;
-        Pattern pattern = Pattern.compile(".*expiration(.*?)(\\d{1,2}/\\d{1,2}/\\d{4})##");
+        Pattern pattern = Pattern.compile(".*expiration([:|@|^|*|%])(\\d{1,2}/\\d{1,2}/\\d{4})##");
         return throwException2(singleItem, pattern);
     }
 
@@ -71,10 +71,9 @@ public class ItemParser {
     private String throwException2(String singleItem, Pattern pattern) throws ItemParseException {
         String stringExpiration;
         Matcher matcher = pattern.matcher(singleItem);
-        if(matcher.matches()) {
+        if (matcher.matches()) {
             stringExpiration = matcher.group(2);
-        }
-        else {
+        } else {
             throw new ItemParseException();
         }
         return stringExpiration;
